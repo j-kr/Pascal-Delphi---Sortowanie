@@ -1,0 +1,502 @@
+program L8Z1;
+
+uses sysutils, math,Windows;
+
+type tabliczka=array of integer;
+
+var tab,tabi,renew_tab:tabliczka;
+   i,n,wybor,wybor2,wybor3,koniec:integer;
+    czas:cardinal;
+    licznik:integer=0;
+    zmiana:boolean=false;
+
+
+procedure swap(var a,b:integer);
+var tmp:integer;
+begin
+     tmp:=a;
+     a:=b;
+     b:=tmp;
+end;
+
+
+procedure wybierz(var tab:tabliczka);
+ var i,j,c_min:integer;
+begin
+     i:=0;
+   for j:=0 to length(tab) do
+       begin
+         c_min := j;
+         for i:=j+1 to length(tab)-1 do
+             begin
+             if (tab[i] < tab[c_min]) then
+               c_min := i;
+
+           end;
+           swap(tab[j], tab[c_min]);
+
+   end;
+end;
+
+
+procedure min_max(var min, max:integer;tab:tabliczka);
+begin
+   for i:=0 to length(tab)-1 do begin
+       if(tab[i]<min)then
+         min:=tab[i];
+       if(tab[i]>max)then
+         max:=tab[i];
+   end;
+end;
+
+procedure zlicz(var tab:tabliczka);
+var i,j,c,min,max:integer;
+  r_tab,h_tab:tabliczka;
+
+begin
+min:=tab[0];
+max:=tab[0];
+j:=0;
+c:=0;
+min_max(min, max, tab);
+   //writeln('max:',max,'min:',min);
+setlength(r_tab,n);
+setlength(h_tab,n);
+   for i:=min to max do begin
+      h_tab[j]:=min;
+      //write(h_tab[j],' ');
+      inc(j);
+      inc(min);
+   end;
+   writeln;
+   for i:=0 to length(h_tab)-1 do
+       r_tab[i]:=0 ;
+
+   for i:=0 to length(tab)-1 do
+       for j:=0 to length(h_tab)-1 do
+           if(tab[i]=h_tab[j])then
+             r_tab[j]:=r_tab[j]+1;
+
+   //for i:=0 to length(r_tab)-1 do
+   //    write(r_tab[i],' ');
+   // writeln;
+
+   for i:=0 to length(tab)-1 do
+       for j:=1 to r_tab[i] do
+           begin
+           tab[c]:=h_tab[i];
+       //write(h_tab[i],' ');
+       inc(c);
+       end;
+
+
+end;
+
+
+procedure bombelek(var tab:tabliczka);
+var i,j:integer;
+    change:boolean=false;
+begin
+for i:=0 to length(tab) do
+begin
+  change:=true;
+    for j:=i+1 to length(tab)-1 do
+        if(tab[i]>tab[j])then
+          begin
+          swap(tab[i],tab[j]);
+          end;
+    if(change=false) then break;
+end;
+end;
+
+
+procedure wstaw(var tab:tabliczka);
+var j,i,tmp:integer;
+begin
+    for i:=1 to length(tab)-1 do
+    begin
+       tmp := tab[i];
+       j := i - 1;
+
+       while (j>=0) and (tab[j]>tmp) do
+         begin
+         tab[j + 1] := tab[j];
+         tab[j] := tmp ;
+         j := j - 1 ;
+         end;
+      end;
+end;
+
+
+{Procedure Quicksort (Var t:tabliczka; l,r:Integer);
+ Var
+     pivot,b,i,j:Integer;
+ Begin
+     If l < r Then
+     Begin
+         pivot := t[random(r-l) + l+1];  { losowanie elementu dzielącego }
+         //pivot:=t[(l+r) lsl 1];
+         //writeln(pivot);
+         i := l-1;
+         j := r+1;
+         Repeat
+             Repeat i := i+1 Until pivot <= t[i];
+             Repeat j := j-1 Until pivot >= t[j];
+             b:=t[i]; t[i]:=t[j]; t[j]:=b
+         Until i >= j;
+         t[j]:=t[i]; t[i]:=b;
+         Quicksort(t,l,i-1);
+         Quicksort(t,i,r)
+     End;
+ End;
+ }
+
+procedure Quicksort (var t:tabliczka; l,r:integer);
+var j,i,x,pivot:integer;
+    begin
+
+
+
+
+       i:=(l+r) div 2;
+       pivot:=t[i]; t[i]:=t[r]; j:=l;
+
+       for i:=l to (r-1) do
+       if t[i]<pivot then begin
+       x:=t[i]; t[i]:=t[j]; t[j]:=x;
+       inc(j);
+       end;
+
+       t[r]:=t[j]; t[j]:=pivot;
+
+       if l<j-1 then Quicksort(t,l,j-1);
+       if j+1<r then Quicksort(t,j+1,r);
+    end;
+
+procedure lacz(var tl, t2:tabliczka; L,s,p:integer);
+var x,y,i,j:integer;
+begin
+j:=L; i:=s+1; x:=L;
+while(j<=s) and (i<=p) do
+  begin
+      if t2[j]>t2[i] then
+      begin
+      tl[x]:=t2[i]; inc(i);
+      end
+      else
+      begin
+      tl[x]:=t2[j];      inc(j);
+      end;
+      inc(x);
+end;
+if i>p then for y:=j to s do
+begin
+  tl[x]:=t2[y];
+  inc(x);
+end
+else for y:=i to p do
+begin
+tl[x]:=t2[y]; inc(x);
+end;
+end;
+
+
+procedure dziel(var tl, t2:tabliczka; L, p:integer);
+var s:integer;
+begin
+if L<p then
+begin
+s:=(L+p) div 2;
+dziel(t2, tl, L, s);
+dziel(t2, tl, s+1, p);
+lacz(tl,t2, L, s, p);
+end;
+end;
+
+
+procedure heapify(var A:tabliczka; l, p:integer);
+var i, j, x: integer;
+begin
+i:=l; j:=2*l; x:=A[i];
+while j<=p do
+  begin
+    if j<p then if A[j]>A[j+1] then j:=j+1;
+    if x<=A[j] then break;
+    A[i]:=A[j]; i:=j; j:=2*i;
+  end;
+A[i]:=x;
+end;
+
+
+procedure HeapSort(var A:tabliczka; n:integer);
+var x, l, p: integer;
+begin
+czas:=GetTickCount();
+for l:=(n div 2) downto 0 do heapify(A, l, n);
+for p:=n downto 0 do
+begin
+  x:= A[0]; A[0]:= A[p]; A[p]:=x; {zamiana miejsc}
+  heapify(A, 0, p-1); {algorytm heapify}
+end;
+end;
+
+
+//procedure kubelek(var tab:tabliczka);
+//var min,max,i,k,wiel:integer;
+//   tab2:array[0..9]of array of integer;
+//begin
+//min:=tab[0];
+//max:=tab[0];
+//min_max(min,max,tab);
+//min:=length(inttostr(max));
+//for i:=0 to min-1 do
+//    for k:=0 to length(tab)-1 do begin
+//      for j:=0 to 9 do
+//        for z:=0 to wiel do
+//        setlength(tab2,10,wiel);
+//        inc(wiel);
+//        tab2[i
+//    end;
+//end;
+
+
+procedure odnow(var tab:tabliczka; var tab1:tabliczka);
+var i:integer;
+    begin
+for i:=0 to length(tab)-1 do
+ begin
+     tab[i]:=tab1[i];
+ end;
+    end;
+
+
+procedure zapisz();
+const
+  NAZWA = 'Sortowanie';
+var f :text;
+
+begin
+inc(licznik);
+assignfile(f,'wyniki.txt');
+if(fileexists('wyniki.txt'))then
+begin
+append(f);
+if(zmiana=true)then
+begin
+write(f,n:7);
+zmiana:=false;
+end;
+ write(f,czas:19) ;
+if(licznik>=7) then
+begin
+writeln(f,'');
+licznik:=0;
+end;
+end
+else
+begin
+rewrite(f);
+
+writeln(f,'Nazwa: ',NAZWA);
+
+    if(zmiana=true)then
+begin
+write(f,n:7);
+zmiana:=false;
+end;
+     write(f,czas:19) ;
+if(licznik>=7) then
+begin
+writeln(f,'');
+licznik:=0;
+end;
+    //write(f,czas:7);
+    //for i := 1 to MAX_LN do
+    //begin
+    //  n := LN[i];
+
+
+end;
+
+closefile(f);
+end;
+begin
+  randomize;
+  repeat
+  repeat
+  writeln('Wybierz wielkosc tablicy do posortowania');
+  writeln('1. 30.000');
+  writeln('2. 50.000');
+  writeln('3. 100.000 ');
+  writeln('4. 150.000 ');
+  writeln('5. 200.000 ');
+  writeln('6. 500.000 ');
+  writeln('7. 1.000.000 ');
+  writeln('8. 2.000.000 ');
+  writeln('9. 5.000.000 ');
+  writeln('10. 10.000.000 ');
+  writeln('11. Dowolna wilkosc tablicy');
+  readln(wybor);
+  until (wybor >=1) and (wybor <=11);
+
+  case (wybor) of
+  1: n:=10;
+  2: n:=50000;
+  3: n:=100000;
+  4: n:=150000;
+  5: n:=200000;
+  6: n:=500000;
+  7: n:=1000000;
+  8: n:=2000000;
+  9: n:=5000000;
+  10: n:=10000000;
+  11: begin writeln('Podaj wielkosc tablicy'); readln(n); end;
+  end;
+
+  setlength(tab,n);
+  setlength(tabi,n);
+  setlength(renew_tab,n);
+
+  for i:=0 to length(tab)-1 do
+  begin
+      tab[i]:=random(10)+1;
+      tabi[i]:=tab[i];
+      renew_tab[i]:=tab[i];
+  end;
+
+  for i:=0 to 10 do              //przed sortowaniem
+      write(tab[i],' ');
+  writeln;
+
+
+  repeat
+
+ writeln('Wybierz sortowanie: ' );
+ writeln('1 - Sortowanie babelkowe (bubble sort)');
+ writeln('2 - Sortowanie przez wybor (selection sort)');
+ writeln('3 - Sortowanie przez wstawianie (insertion sort)');
+ writeln('4 - Sortowanie przez scalanie (merge sort)');
+ writeln('5 - Sortowanie przez zliczanie (counting sort) – tylko liczby całkowite');
+ writeln('6 - Sortowanie przez kopcowanie (heap sort)');
+ writeln('7 - Sortowanie kubelkowe (bucket sort)');
+ writeln('8 - Sortowanie szybkie (quick sort)');
+ writeln('9 - Wszystkie');
+ readln(wybor3);
+
+ case (wybor3) of
+  1: begin
+  czas:=GetTickCount(); bombelek(tab); czas:=GetTickCount()-czas;
+  writeln('Czas sortowania babelkowego w ms dla n= ',' wynosi: ',czas);
+  end; //sortowanie przez bombelek
+
+  2: begin
+  czas:=GetTickCount(); wybierz(tab); czas:=GetTickCount()-czas;
+  writeln('Czas sortowania przez wybor w ms dla n= ',' wynosi: ',czas);
+  end;                        //sortowanie przez wybor
+
+  3: begin
+  czas:=GetTickCount(); wstaw(tab);  czas:=GetTickCount()-czas;
+  writeln('Czas sortowania przez wstawianie w ms dla n= ',' wynosi: ',czas);
+  end;                      //sortowanie przez wstawianie
+
+  4: begin
+  czas:=GetTickCount(); dziel(tab,tabi,0,length(tab)-1); czas:=GetTickCount()-czas;
+  writeln('Czas sortowania przez laczenie w ms dla n= ',' wynosi: ',czas);
+  end; //sortowanie przez laczenie
+
+  5: begin
+  czas:=GetTickCount(); zlicz(tab); czas:=GetTickCount()-czas;
+  writeln('Czas sortowania przez zliczanie w ms dla n= ',' wynosi: ',czas);
+  end;                         //sortowanie przez zliczanie
+
+  6: begin
+  czas:=GetTickCount(); heapsort(tab,length(tab)-1); czas:=GetTickCount()-czas;
+  writeln('Czas sortowania przez kopcowanie w ms dla n= ',' wynosi: ',czas);
+  end;               //sortowanie przez kopcowanie
+
+  //7: ;
+
+  8: begin
+  czas:=GetTickCount();
+  quicksort(tab,0,length(tab)-1);
+    czas:=GetTickCount()-czas;
+  writeln('Czas sortowania przez szybkiego w ms dla n= ',' wynosi: ',czas);
+  end; //sortowanie szybkie
+
+  9: begin
+  zmiana:=true;
+  czas:=GetTickCount(); bombelek(tab); czas:=GetTickCount()-czas;
+  writeln('Czas sortowania babelkowego w ms dla n= ',' wynosi: ',czas);
+  zapisz();
+                      //sortowanie przez bombelek
+  odnow(tab,renew_tab);
+  czas:=GetTickCount(); wybierz(tab); czas:=GetTickCount()-czas;
+  writeln('Czas sortowania przez wybor w ms dla n= ',' wynosi: ',czas);
+  zapisz();
+                          //sortowanie przez wybor
+  odnow(tab,renew_tab);
+  czas:=GetTickCount(); wstaw(tab);  czas:=GetTickCount()-czas;
+  writeln('Czas sortowania przez wstawianie w ms dla n= ',' wynosi: ',czas);
+  zapisz();
+                        //sortowanie przez wstawianie
+  odnow(tab,renew_tab);
+  czas:=GetTickCount(); dziel(tab,tabi,0,length(tab)-1); czas:=GetTickCount()-czas;
+  write('Czas sortowania przez laczenie w ms dla n= ',' wynosi: ',czas);
+  zapisz();
+   //sortowanie przez laczenie
+
+  odnow(tab,renew_tab);
+  czas:=GetTickCount(); zlicz(tab); czas:=GetTickCount()-czas;
+  writeln('Czas sortowania przez zliczanie w ms dla n= ',' wynosi: ',czas);
+  zapisz();
+                           //sortowanie przez zliczanie
+
+  odnow(tab,renew_tab);
+  czas:=GetTickCount(); heapsort(tab,length(tab)-1); czas:=GetTickCount()-czas;
+  writeln('Czas sortowania przez kopcowanie w ms dla n= ',' wynosi: ',czas);
+  zapisz();
+                 //sortowanie przez kopcowanie
+
+  //7: ;
+  odnow(tab,renew_tab);
+  czas:=GetTickCount();
+  quicksort(tab,0,length(tab)-1);
+    czas:=GetTickCount()-czas;
+  writeln('Czas sortowania szybkiego w ms dla n= ',' wynosi: ',czas);
+  zapisz();
+
+   //sortowanie szybkie
+
+  end;
+  end;
+             for i:=0 to 10 do   //po sortowaniu
+         write(tab[i],' ');
+
+ writeln('1 - Wroc do wyboru sortowania' );
+ writeln('2 - Wyjdz' );
+  readln(wybor2);
+
+  case (wybor2) of
+  1:odnow(tab,renew_tab);
+  2:;
+  end;
+  until wybor2=2;
+  writeln('1 - Wyjscie z programu');
+  writeln('2 - Wroc do wyboru wielkosci tablicy');
+  readln(koniec);
+  until koniec=1;
+
+  //odnow(tab,renew_tab);
+
+  //for i:=0 to 100 do   //po sortowaniu
+  //    write(tab[i],' ');
+  //
+  //writeln;
+  //for i:=0 to 100 do   //kopia tablicy
+  //    write(renew_tab[i],' ');
+
+  readln;
+end.
+
+
+

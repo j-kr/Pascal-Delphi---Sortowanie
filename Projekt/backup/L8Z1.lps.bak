@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="9"/>
+    <BuildModes Active="Default"/>
+    <Units Count="1">
+      <Unit0>
+        <Filename Value="L8Z1.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="L8Z1"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="0"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="352"/>
+        <CursorPos X="27" Y="373"/>
+        <UsageCount Value="58"/>
+        <Loaded Value="True"/>
+      </Unit0>
+    </Units>
+    <General>
+      <ActiveWindowIndexAtStart Value="0"/>
+    </General>
+    <JumpHistory Count="2" HistoryIndex="1">
+      <Position1>
+        <Filename Value="L8Z1.pas"/>
+        <Caret Line="169" Column="39" TopLine="134"/>
+      </Position1>
+      <Position2>
+        <Filename Value="L8Z1.pas"/>
+        <Caret Line="157" Column="21" TopLine="137"/>
+      </Position2>
+    </JumpHistory>
+  </ProjectSession>
+</CONFIG>
